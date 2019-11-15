@@ -3,7 +3,7 @@ Project 1 of Performance Engineering of Software Systems
 
 Ported to rust.
 
-
+``` 
 ├── benches
 │   ├── my_benchmark.rs
 │   └── rotate_bench.rs
@@ -17,9 +17,9 @@ Ported to rust.
     ├── lib.rs
     ├── main.rs
     └── modulo.c
+```
 
 Using criterion for benchmarking, it's fantastic, check this out:
 It generates reports and maintains a history for comparing changes.
 
-!(image)[https://i.imgur.com/BL0ookS.jpg]
-
+![alt text](https://i.imgur.com/BL0ookS.jpg "Benchmark figure text")

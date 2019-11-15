@@ -17,6 +17,9 @@ debug: ## debug with gdb
 build: ## build
 	cargo build		
 
+bench: ## bench mark
+	CRITERION_DEBUG=1 cargo bench
+
 test: ## test
 	cargo test
 

@@ -21,7 +21,7 @@
 //  * IN THE SOFTWARE.
 //  **/
 use rand::Rng;
-    
+   
 /// Abstract data type representing an array of bits.
 #[derive(Debug)]
 pub struct BitArray {
@@ -48,7 +48,7 @@ impl BitArray {
         let data = vec![n];
         BitArray { bit_sz: 8, data }
     }
-
+    
     /// Returns the number of bits stored in a bit array.
     /// Note the invariant bitarray_get_bit_sz(bitarray_new(n)) = n.
     pub fn get_bit_sz(&self) -> usize {
@@ -148,7 +148,7 @@ impl BitArray {
                          BitArray::modulo(-bit_right_amount, bit_length));
     }
 
-    pub fn rotate_left(&mut self,
+    fn rotate_left(&mut self,
                        bit_offset: usize,
                        bit_length: usize,
                        bit_left_amount: usize) {
@@ -156,22 +156,8 @@ impl BitArray {
             self.rotate_left_one(bit_offset, bit_length);
         }
     }
-
-   
-    // fn bitarray_rotate_left_one(bitarray_t* const bitarray,
-    //                                      const size_t bit_offset,
-    //                                      const size_t bit_length) {
-    //     // Grab the first bit in the range, shift everything left by one, and
-    //     // then stick the first bit at the end.
-    //     const bool first_bit = bitarray_get(bitarray, bit_offset);
-    //     size_t i;
-    //     for (i = bit_offset; i + 1 < bit_offset + bit_length; i++) {
-    //         bitarray_set(bitarray, i, bitarray_get(bitarray, i + 1));
-    //     }
-    //     bitarray_set(bitarray, i, first_bit);
-    // }
     
-    pub fn rotate_left_one(&mut self, bit_offset: usize, bit_length: usize) {
+    fn rotate_left_one(&mut self, bit_offset: usize, bit_length: usize) {
         // Grab the first bit in the range, shift everything left by
         // one, and then stick the first bit at the end.
         let first_bit = self.get(bit_offset);
@@ -209,14 +195,6 @@ impl BitArray {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn test_bitmask() {
-        for i in 0..8 {
-            assert_eq!(1 << i, BitArray::bitmask(i));
-        }
-    }
- 
     const N: usize = 1000;
     
     #[test]
@@ -397,5 +375,6 @@ mod tests {
         assert_eq!(BitArray::modulo(4, 2), 0);
         assert_eq!(BitArray::modulo(4, 3), 1);
         assert_eq!(BitArray::modulo(4, 4), 0);
-    }
+    }   
 }
+

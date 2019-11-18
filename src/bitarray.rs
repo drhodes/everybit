@@ -49,6 +49,18 @@ impl BitArray {
         BitArray { bit_sz: 8, data }
     }
     
+    pub fn from_str(bits: &str) -> BitArray {
+        let mut arr = BitArray::new(bits.len());
+        for (i, b) in bits.chars().rev().enumerate() {
+            arr.set(i, match b {
+                '0' => false,
+                '1' => true,
+                _ => panic!(format!("BitArray::from_str gets bad input {}", b)),
+            });
+        }
+        return arr;
+    }
+    
     /// Returns the number of bits stored in a bit array.
     /// Note the invariant bitarray_get_bit_sz(bitarray_new(n)) = n.
     pub fn get_bit_sz(&self) -> usize {
@@ -75,7 +87,7 @@ impl BitArray {
         let target_byte = self.data[byte_idx];
         target_byte & BitArray::bitmask(bit_index) != 0
     }
-
+    
     fn bitmask(bit_index: usize) -> u8 {
         1 << (bit_index % 8)
     }
@@ -127,7 +139,7 @@ impl BitArray {
     ///
     /// Example:
     /// Let ba be a bit array containing the byte 0b10010110; then,
-    /// bitarray_rotate(ba, 2, 5, 2) rotates the third through seventh
+    /// bitarray.rotate(2, 5, 2) rotates the third through seventh
     /// (inclusive) bits right two places.  After the rotation, ba contains the
     /// byte 0b10110100.
     
@@ -192,6 +204,22 @@ impl BitArray {
     }
 }
 
+impl PartialEq for BitArray {
+    fn eq(&self, other: &Self) -> bool {
+        if self.get_bit_sz() != other.get_bit_sz() {
+            return false;
+        }
+        for i in 0 .. self.get_bit_sz() {
+            if self.get(i) != other.get(i) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+impl Eq for BitArray {}
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -242,6 +270,26 @@ mod tests {
         assert_eq!(ba.get(7), true);
     }
 
+    #[test]
+    fn test_str_constructor() {
+        let ba1 = BitArray::from_str("10010110");
+        let ba2 = BitArray::from_u8(0b10010110);
+
+        for i in 0 .. ba1.bit_sz {        
+            assert_eq!(ba1.get(i), ba2.get(i))
+        }
+    }
+
+    #[test]
+    fn test_str_constructor_2() {
+        let ba = BitArray::from_str("111111111111111");
+        assert_eq!(15, ba.get_bit_sz());
+        
+        for i in 0 .. ba.get_bit_sz() {        
+            assert_eq!(ba.get(i), true);
+        }
+    }
+
     
     #[test]
     fn test_rotate_left_one_1() {
@@ -259,6 +307,18 @@ mod tests {
         let exp_ba = BitArray::from_u8(expected);
         ba.rotate_left(0, 8, 0);        
         assert_eq!(ba.data, exp_ba.data);
+    }
+
+    #[test]
+    fn test_rotate_left_one_from_str() {
+        let mut ba1 = BitArray::from_str("111111101111111");
+        let exp = BitArray::from_str(    "111111110111111");
+
+        println!("{:?}", ba1.show());
+        println!("{:?}", exp.show());
+        
+        ba1.rotate_left_one(0, exp.get_bit_sz());
+        assert_eq!(ba1, exp);
     }
     
     #[test]    
@@ -304,7 +364,6 @@ mod tests {
         println!("{:?} =? {:?}", ba.show(), exp_ba.show());
         assert_eq!(ba.data, exp_ba.data);
     }
-
     
     #[test] 
     fn test_rotate_right() {
